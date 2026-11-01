@@ -30,6 +30,7 @@ jobs:
       TASK: ${{ inputs.task }}
       MAX_ITERS: ${{ inputs.max_iters }}
       GEMINI_KEY: ${{ secrets.LLM_API_KEY }}
+      MODELS: gemini-3.5-flash,gemini-3.8-flash
     steps:
       - uses: actions/checkout@v4
 
