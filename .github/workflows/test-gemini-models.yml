@@ -1,0 +1,25 @@
+name: Test Gemini Models
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Try each candidate model
+        env:
+          GEMINI_KEY: ${{ secrets.LLM_API_KEY }}
+        run: |
+          for M in gemini-3.8-flash gemini-3.7-flash gemini-3.5-flash gemini-3.1-pro-preview gemini-2.5-pro gemini-2.5-flash gemini-flash-latest gemini-pro-latest; do
+            HTTP=$(curl -sS -o out.json -w "%{http_code}" -X POST \
+              "https://generativelanguage.googleapis.com/v1beta/models/$M:generateContent" \
+              -H "x-goog-api-key: $GEMINI_KEY" \
+              -H "Content-Type: application/json" \
+              -d '{"contents":[{"parts":[{"text":"Reply with the single word OK"}]}]}')
+            if [ "$HTTP" = "200" ]; then
+              echo "$M -> OK"
+            else
+              echo "$M -> HTTP $HTTP : $(jq -r '.error.message // "unknown error"' out.json | head -c 160)"
+            fi
+          done
