@@ -1,0 +1,22 @@
+name: Test Gemini
+
+on:
+  workflow_dispatch:
+
+jobs:
+  list-models:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List models that support generateContent
+        env:
+          GEMINI_KEY: ${{ secrets.LLM_API_KEY }}
+        run: |
+          HTTP=$(curl -sS -o models.json -w "%{http_code}" \
+            "https://generativelanguage.googleapis.com/v1beta/models?pageSize=200" \
+            -H "x-goog-api-key: $GEMINI_KEY")
+          echo "HTTP status: $HTTP"
+          if [ "$HTTP" != "200" ]; then
+            cat models.json
+            exit 1
+          fi
+          jq -r '.models[] | select(.supportedGenerationMethods | index("generateContent")) | .name' models.json
