@@ -1,0 +1,9 @@
+Package: com.mody.modcpoy
+Name: MODcpoy
+Version: 0.0.1
+Architecture: iphoneos-arm64e
+Description: Enables copy, paste, and text selection on restricted websites in Safari.
+Maintainer: mody
+Author: mody
+Section: Tweaks
+Depends: firmware (>= 16.0)
